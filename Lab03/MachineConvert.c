@@ -60,6 +60,49 @@ int main() {
     
     printf("The opcode is: %s (decimal: %d)\n", opcode, opcodeDecimal);
     printf("Format type: %s\n", formatType);
+
+    //Now that we know the format, we can make cases for each format to determine the fields + their values.
+    //What we are given for the list of instructions that they'll test is as follows:
+    //R-type: add, and, or, sll, slt, sra, srl, sub, xor, sltu, 
+    //I-Type: lb, lw, sltiu, addi, andi, jalr, lh, ori, slli, slti, srai, srli, ori
+    //S-Type: sb, sh, sw
+    //SB-Type: beq, blt, bge, bne,
+    //U-Type:
+    //UJ-Type: jal
+
+    if(formatType[0] == 'R') {
+        // R-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), rs2 (5 bits), funct7 (7 bits)
+        char rd[6], funct3[4], rs1[6], rs2[6], funct7[8];
+        strncpy(rd, instruction + 20, 5);
+        rd[5] = '\0';
+        strncpy(funct3, instruction + 17, 3);
+        funct3[3] = '\0';
+        strncpy(rs1, instruction + 12, 5);
+        rs1[5] = '\0';
+        strncpy(rs2, instruction + 7, 5);
+        rs2[5] = '\0';
+        strncpy(funct7, instruction, 7);
+        funct7[7] = '\0';
+        
+        printf("R-type fields:\n");
+        printf("rd: %s\n", rd);
+        printf("funct3: %s\n", funct3);
+        printf("rs1: %s\n", rs1);
+        printf("rs2: %s\n", rs2);
+
+
+        if(funct7 == "0000000") {
+            printf("This is an ADD instruction.\n");
+        } elif (funct7 == "0100000") {
+            printf("This is a SUB instruction.\n");
+        } elif (funct7 == )
+        printf("funct7: %s\n", funct7);
+
+    }
+
+
+
+
     main();
     return 0;
 }
