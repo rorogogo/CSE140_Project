@@ -107,7 +107,7 @@ main:
 #	for (j = 0; j < M; j++)
 #		for (k = 0; k < N; k++)
 #			C[i][j] = C[i][j] + A[i][k] x B[k][j];
-
+#m columns, n rows.
 
 start:
 	li t0, 0          # i = 0
