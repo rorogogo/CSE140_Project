@@ -95,9 +95,7 @@ int main() {
             printf("This is an ADD instruction.\n");
         } elif (funct7 == "0100000") {
             printf("This is a SUB instruction.\n");
-        } elif (funct7 == )
-        printf("funct7: %s\n", funct7);
-
+        } 
     }
 
 
