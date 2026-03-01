@@ -71,7 +71,7 @@ int main() {
     //UJ-Type: jal
 
     if(formatType[0] == 'R') {
-        // R-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), rs2 (5 bits), funct7 (7 bits)
+        // R-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), rs2 (5 bits), funct7 (7 bi  ts)
         char rd[6], funct3[4], rs1[6], rs2[6], funct7[8];
         strncpy(rd, instruction + 20, 5);
         rd[5] = '\0';
@@ -93,9 +93,71 @@ int main() {
 
         if(funct7 == "0000000") {
             printf("This is an ADD instruction.\n");
-        } elif (funct7 == "0100000") {
+        } else if (funct7 == "0100000") {
             printf("This is a SUB instruction.\n");
         } 
+    }
+
+    if(formatType[0]=='I'){
+        // I-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), imm[11:0] (12 bits)
+        char rd[6], funct3[4], rs1[6], imm11[13];
+        strncpy(rd, instruction + 20, 5);
+        rd[5]='\0';
+        strncpy(funct3, instruction + 17, 3);
+        funct3[3]='\0';
+        strncpy(rs1,instruction + 12,5);
+        rs1[5]='\0';
+        strncpy(imm11, instruction, 12);
+        imm11[12]='\0';
+
+        printf("I-Type fields:\n");
+        printf("rd: %s\n", rd);
+        printf("funct3: %s\n", funct3);
+        printf("rs1: %s\n", rs1);
+        printf("imm11: %s\n", imm11);
+
+        // too many if else; alternative? or
+        //funct 3 has couple identicals. need to finish rest of cases and polish
+        if(strcmp(funct3,"000")){
+            printf("This is an lb instruction");
+        }
+        else if (strcmp(funct3,"010")){
+            printf("This is a lw instruction");
+        }
+        else if (strcmp(funct3,"011")){
+            printf("This is a sltiu instruction");
+        }
+        else if (strcmp(funct3,"000")){
+            printf("This is a addi instruction");
+        }
+        else if (strcmp(funct3,"111")){
+            printf("This is a andi instruction");
+        }
+        else if (strcmp(funct3,"000")){
+            printf("This is a jalr instruction");
+        }
+        else if (strcmp(funct3,"001")){
+            printf("This is a lh instruction");
+        }
+        else if (strcmp(funct3,"110")){
+            printf("This is a ori instruction");
+        }
+        else if (strcmp(funct3,"001")){
+            printf("This is a slli instruction");
+        }
+        else if (strcmp(funct3,"010")){
+            printf("This is a slti instruction");
+        }
+        else if (strcmp(funct3,"101")){
+            printf("This is a srai instruction");
+        }
+        else if (strcmp(funct3,"101")){
+            printf("This is a srli instruction");
+        }
+        
+        
+
+
     }
 
 
