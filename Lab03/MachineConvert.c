@@ -121,6 +121,7 @@ int main() {
         // too many if else; alternative? or
         //funct 3 has couple identicals. need to finish rest of cases and polish
         if(strcmp(funct3,"000")==0){
+
             if(strcmp(opcode,"0000011")==0){
             printf("This is an lb instruction");
             // FIX THIS WARNING BECAUSE YOU FORGOT HOW TO WRITE IN C
@@ -135,6 +136,7 @@ int main() {
         }
 
         else if(strcmp(funct3, "010")){
+
             if (strcmp(opcode,"0000011")==0){
                 printf("This is a lw instruction!");
             }
@@ -143,21 +145,14 @@ int main() {
             }
         }
 
-        // else if (strcmp(funct3,"010")){
-        //     printf("This is a lw instruction");
-        // }
         else if (strcmp(funct3,"011")==0){
             printf("This is a sltiu instruction");
         }
-        // else if (strcmp(funct3,"000")){
-        //     printf("This is a addi instruction");
-        // }
+        
         else if (strcmp(funct3,"111")==0){
             printf("This is a andi instruction");
         }
-        // else if (strcmp(funct3,"000")){
-        //     printf("This is a jalr instruction");
-        // }
+        
         
         else if (strcmp(funct3,"001")==0){
             if (strcmp(opcode,"0000011")==0){
@@ -170,12 +165,8 @@ int main() {
         else if (strcmp(funct3,"110")==0){
             printf("This is a ori instruction");
         }
-        // else if (strcmp(funct3,"001")){
-        //     printf("This is a slli instruction");
-        // }
-        // else if (strcmp(funct3,"010")){
-        //     printf("This is a slti instruction");
-        // }
+        
+        // NEED THE FULL IMM11 OR ELSE WILL NOT WORK
         else if (strcmp(funct3,"101")==0){
             if (strcmp(imm11,"0100000")==0){
                 printf("This is a srai instruction");
@@ -184,13 +175,40 @@ int main() {
                 printf("This is a srli instruction");
         }}
         
-        
-
-
     }
 
+    //S-Type: sb, sh, sw
+    if(formatType[0]=='S'){
+        char imm4[6], funct3[3], rs1[6], rs2[6], imm11[8]; 
 
+        strncpy(imm4, instruction + 20, 5);
+        imm4[5] = '\0';
+        strncpy(funct3, instruction + 17, 3);
+        funct3[3] = '\0';
+        strncpy(rs1, instruction + 12, 5);
+        rs1[5] = '\0';
+        strncpy(rs2, instruction + 7, 5);
+        rs2[5] = '\0';
+        strncpy(imm11, instruction, 7);
+        imm11[7] = '\0';
 
+        printf("R-type fields:\n");
+        printf("imm[4:0]: %s\n", imm4);
+        printf("funct3: %s\n", funct3);
+        printf("rs1: %s\n", rs1);
+        printf("rs2: %s\n", rs2);
+        printf("imm[11:5] %s\n", imm11);
+
+        if(strcmp(funct3,"000")==0){
+            printf("This is a sb instruction");
+        }
+        else if (strcmp(funct3,"001")==0){
+            printf("This is a sh instruction");
+        }
+        else if(strcmp(funct3,"010")==0){
+            printf("This is a sw instruction");
+        }
+    }
 
     main();
     return 0;
