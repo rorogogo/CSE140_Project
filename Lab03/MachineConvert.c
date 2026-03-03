@@ -65,7 +65,7 @@ int main() {
 
     //Now that we know the format, we can make cases for each format to determine the fields + their values.
     //What we are given for the list of instructions that they'll test is as follows:
-    //R-type: add, and, or, sll, slt, sra, srl, sub, xor, sltu, 
+    //R-type: , , , , , , , , , , 
     //I-Type: lb, lw, sltiu, addi, andi, jalr, lh, ori, slli, slti, srai, srli, ori
     //S-Type: sb, sh, sw
     //SB-Type: beq, blt, bge, bne,
@@ -85,7 +85,7 @@ int main() {
         rs2[5] = '\0';
         strncpy(funct7, instruction, 7);
         funct7[7] = '\0';
-        
+
         /* convert registers to integers for printing */
         int rd_num   = binaryToDecimal(rd);
         int rs1_num  = binaryToDecimal(rs1);
@@ -230,6 +230,24 @@ int main() {
         else if(strcmp(funct3,"010")==0){
             printf("This is a sw instruction");
         }
+    }
+
+    //SB-Type: beq, blt, bge, bne
+    if(formatType[0]=='S' && formatType[1]=='B'){
+        // SB-type fields to extract
+        
+    }
+
+    //U-Type:
+    if(formatType[0]=='U' && formatType[1]!='\0'){
+        // U-type fields to extract
+        
+    }
+
+    //UJ-Type: jal
+    if(formatType[0]=='U' && formatType[1]=='J'){
+        // UJ-type fields to extract
+        
     }
 
     main();
