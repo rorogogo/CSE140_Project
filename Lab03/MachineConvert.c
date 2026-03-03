@@ -89,11 +89,11 @@ int main() {
         funct7[7] = '\0';
 
         /* convert registers to integers for printing */
-        int rd_num   = binaryToDecimal(rd);
-        int rs1_num  = binaryToDecimal(rs1);
-        int rs2_num  = binaryToDecimal(rs2);
-        int f3_num   = binaryToDecimal(funct3);
-        int f7_num   = binaryToDecimal(funct7);
+        int rd_num = binaryToDecimal(rd);
+        int rs1_num = binaryToDecimal(rs1);
+        int rs2_num = binaryToDecimal(rs2);
+        int f3_num = binaryToDecimal(funct3);
+        int f7_num = binaryToDecimal(funct7);
 
         const char *operation = "unknown";
         if (strcmp(funct3, "000") == 0) {
