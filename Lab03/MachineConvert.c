@@ -72,6 +72,8 @@ int main() {
     //U-Type:
     //UJ-Type: ,
 
+    //These aren't on the list but they're on the reference sheet (TA said to do more than just the ones on the assignment):
+    //addw, subw, sllw, srlw, sraw.
     if(formatType[0] == 'R') {
         // R-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), rs2 (5 bits), funct7 (7 bits)
         char rd[6], funct3[4], rs1[6], rs2[6], funct7[8];
