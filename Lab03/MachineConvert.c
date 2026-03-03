@@ -203,7 +203,7 @@ int main() {
 
     //S-Type: sb, sh, sw
     if(formatType[0]=='S'&& formatType[1]=='\0'){
-        char imm4[6], funct3[3], rs1[6], rs2[6], imm11[8]; 
+        char imm4[6], funct3[4], rs1[6], rs2[6], imm11[8]; 
 
         strncpy(imm4, instruction + 20, 5);
         imm4[5] = '\0';
@@ -237,7 +237,7 @@ int main() {
     //SB-Type: beq, blt, bge, bne
     if(formatType[0]=='S' && formatType[1]=='B'){
         // SB-type fields to extract
-        char imm41[6], funct3[3], rs1[6], rs2[6], imm12[8]; 
+        char imm41[6], funct3[4], rs1[6], rs2[6], imm12[8]; 
 
         strncpy(imm41, instruction + 20, 5);
         imm41[5] = '\0';
