@@ -258,7 +258,6 @@ int main() {
         printf("Immediate: %d (0x%X)\n", imm_val, imm_val);
     }
 
-
     if(formatType[0]=='U' && formatType[1]=='J'){
         // UJ-type: opcode (7 bits), rd (5 bits), imm[20] (1 bit), imm[10:1] (10 bits), imm[11] (1 bit), imm[19:12] (8 bits)
         char rd[6];
