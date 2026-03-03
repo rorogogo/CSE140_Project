@@ -36,7 +36,7 @@ char* getFormatType(int opcode) {
 
 int main() {
     char instruction[999];
-    printf("Enter a 32-bit RISC-V instruction in binary: ");
+    printf("\nEnter a 32-bit RISC-V instruction in binary: ");
     scanf("%s", instruction);
     int len = strlen(instruction);
     if (len != 32) {
@@ -61,7 +61,7 @@ int main() {
     char *formatType = getFormatType(opcodeDecimal);
     
     printf("The opcode is: %s (decimal: %d)\n", opcode, opcodeDecimal);
-    printf("Format type: %s\n", formatType);
+    printf("Instruction type: %s\n", formatType);
 
     //Now that we know the format, we can make cases for each format to determine the fields + their values.
     //What we are given for the list of instructions that they'll test is as follows:
@@ -86,18 +86,40 @@ int main() {
         strncpy(funct7, instruction, 7);
         funct7[7] = '\0';
         
-        printf("R-type fields:\n");
-        printf("rd: %s\n", rd);
-        printf("funct3: %s\n", funct3);
-        printf("rs1: %s\n", rs1);
-        printf("rs2: %s\n", rs2);
+        /* convert registers to integers for printing */
+        int rd_num   = binaryToDecimal(rd);
+        int rs1_num  = binaryToDecimal(rs1);
+        int rs2_num  = binaryToDecimal(rs2);
+        int f3_num   = binaryToDecimal(funct3);
+        int f7_num   = binaryToDecimal(funct7);
 
+        const char *operation = "unknown";
+        if (strcmp(funct3, "000") == 0) {
+            if (strcmp(funct7, "0000000") == 0) operation = "add";
+            else if (strcmp(funct7, "0100000") == 0) operation = "sub";
+        } else if (strcmp(funct3, "111") == 0 && strcmp(funct7, "0000000") == 0) {
+            operation = "and";
+        } else if (strcmp(funct3, "110") == 0 && strcmp(funct7, "0000000") == 0) {
+            operation = "or";
+        } else if (strcmp(funct3, "001") == 0 && strcmp(funct7, "0000000") == 0) {
+            operation = "sll";
+        } else if (strcmp(funct3, "010") == 0 && strcmp(funct7, "0000000") == 0) {
+            operation = "slt";
+        } else if (strcmp(funct3, "101") == 0) {
+            if (strcmp(funct7, "0000000") == 0)      operation = "srl";
+            else if (strcmp(funct7, "0100000") == 0) operation = "sra";
+        } else if (strcmp(funct3, "100") == 0 && strcmp(funct7, "0000000") == 0) {
+            operation = "xor";
+        } else if (strcmp(funct3, "011") == 0 && strcmp(funct7, "0000000") == 0) {
+            operation = "sltu";
+        }
 
-        if(funct7 == "0000000") {
-            printf("This is an ADD instruction.\n");
-        } else if (funct7 == "0100000") {
-            printf("This is a SUB instruction.\n");
-        } 
+        printf("Operation: %s\n", operation);
+        printf("Rs1: x%d\n", rs1_num);
+        printf("Rs2: x%d\n", rs2_num);
+        printf("Rd: x%d\n", rd_num);
+        printf("Funct3: %s (%d)\n", funct3, f3_num);
+        printf("Funct7: %s (%d)", funct7, f7_num);
     }
 
     if(formatType[0]=='I'){
