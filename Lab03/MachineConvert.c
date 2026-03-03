@@ -89,11 +89,11 @@ int main() {
         funct7[7] = '\0';
 
         /* convert registers to integers for printing */
-        int rd_num   = binaryToDecimal(rd);
-        int rs1_num  = binaryToDecimal(rs1);
-        int rs2_num  = binaryToDecimal(rs2);
-        int f3_num   = binaryToDecimal(funct3);
-        int f7_num   = binaryToDecimal(funct7);
+        int rd_num = binaryToDecimal(rd);
+        int rs1_num = binaryToDecimal(rs1);
+        int rs2_num = binaryToDecimal(rs2);
+        int f3_num = binaryToDecimal(funct3);
+        int f7_num = binaryToDecimal(funct7);
 
         const char *operation = "unknown";
         if (strcmp(funct3, "000") == 0) {
@@ -298,14 +298,15 @@ int main() {
         else if(strcmp(funct3,"101")==0){
             printf("Operation: bge\n");
         }
-    
-
-        // printf("sb-type fields:\n");
-        printf("imm[4:1|11]: %s\n", imm41);
-        printf("funct3: %s\n", funct3);
-        printf("rs1: %s\n", rs1);
-        printf("rs2: %s\n", rs2);
-        printf("imm[12|10:5] %s\n", imm12);
+        char imm[13];  //12 bit imm
+        imm[0] = imm12[0];
+        strncpy(imm + 1, imm12 + 1, 6);    //10:5
+        strncpy(imm + 7, imm41, 4);        //4:1
+        imm[11] = imm41[4];
+        imm[12] = '\0';
+        printf("rs1: x%d\n", binaryToDecimal(rs1));
+        printf("rs2: x%d\n", binaryToDecimal(rs2));
+        printf("Immediate: %d\n", binaryToDecimal(imm));
 
     }
 
