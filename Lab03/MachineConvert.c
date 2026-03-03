@@ -63,17 +63,17 @@ int main() {
     printf("The opcode is: %s (decimal: %d)\n", opcode, opcodeDecimal);
     printf("Instruction type: %s\n", formatType);
 
-    //Now that we know the format, we can make cases for each format to determine the fields + their values.
+    //Now that we know the format, we can make cases for each format to determine the fields + their values. I will delete the ones that I've done so we don't double up and it's easier to read.
     //What we are given for the list of instructions that they'll test is as follows:
     //R-type: , , , , , , , , , , 
     //I-Type: lb, lw, sltiu, addi, andi, jalr, lh, ori, slli, slti, srai, srli, ori
     //S-Type: sb, sh, sw
     //SB-Type: beq, blt, bge, bne,
     //U-Type:
-    //UJ-Type: jal
+    //UJ-Type: ,
 
     if(formatType[0] == 'R') {
-        // R-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), rs2 (5 bits), funct7 (7 bi  ts)
+        // R-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), rs2 (5 bits), funct7 (7 bits)
         char rd[6], funct3[4], rs1[6], rs2[6], funct7[8];
         strncpy(rd, instruction + 20, 5);
         rd[5] = '\0';
@@ -238,16 +238,56 @@ int main() {
         
     }
 
-    //U-Type:
-    if(formatType[0]=='U' && formatType[1]!='\0'){
-        // U-type fields to extract
-        
+    // U-Type
+    if(formatType[0]=='U' && formatType[1]=='\0'){
+        // U-type: opcode (7 bits), rd (5 bits), imm[31:12] (20 bits)
+        char rd[6], imm20[21];
+        strncpy(rd, instruction + 20, 5);
+        rd[5] = '\0';
+        strncpy(imm20, instruction, 20);
+        imm20[20] = '\0';
+        int rd_num = binaryToDecimal(rd);
+        int imm_val = binaryToDecimal(imm20);
+        if(strcmp(opcode,"0110111")==0){
+            printf("Operation: lui\n");
+        }
+        else if(strcmp(opcode,"0010111")==0){
+            printf("Operation: auipc\n");
+        }
+        printf("Rd: x%d\n", rd_num);
+        printf("Immediate: %d (0x%X)\n", imm_val, imm_val);
     }
 
-    //UJ-Type: jal
+
     if(formatType[0]=='U' && formatType[1]=='J'){
-        // UJ-type fields to extract
-        
+        // UJ-type: opcode (7 bits), rd (5 bits), imm[20] (1 bit), imm[10:1] (10 bits), imm[11] (1 bit), imm[19:12] (8 bits)
+        char rd[6];
+        rd[5] = '\0';
+        strncpy(rd, instruction + 20, 5);
+        // Extract immediate parts
+        //imm[20] is the sign bit, imm[10:1] is 30-21, imm[11] is 20, imm[19:12] is 19-12.
+        char imm20[2], imm10_1[11], imm11[2], imm19_12[9];
+        strncpy(imm20, instruction, 1);
+        imm20[1] = '\0';
+        strncpy(imm10_1, instruction + 1, 10);
+        imm10_1[10] = '\0';
+        strncpy(imm11, instruction + 11, 1);
+        imm11[1] = '\0';
+        strncpy(imm19_12, instruction + 12, 8);
+        imm19_12[8] = '\0';
+        // Reconstruct immediate in correct order
+        char fullImm[22]; //It took me a bit to realize I needed 22 not 21 because I needed to shift left by one later for the offset.
+        strcpy(fullImm, imm20);
+        strcat(fullImm, imm19_12);
+        strcat(fullImm, imm11);
+        strcat(fullImm, imm10_1);
+        fullImm[20] = '\0';
+        int rd_num = binaryToDecimal(rd);
+        int imm_val = binaryToDecimal(fullImm);
+        imm_val = imm_val << 1; // Shift left by 1 to get byte offset
+        printf("Operation: jal\n");
+        printf("Rd: x%d\n", rd_num);
+        printf("Immediate: %d (0x%X)\n", imm_val, imm_val);
     }
 
     main();
