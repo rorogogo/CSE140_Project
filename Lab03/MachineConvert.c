@@ -222,6 +222,7 @@ int main() {
     //S-Type: sb, sh, sw
     if(formatType[0]=='S'&& formatType[1]=='\0'){
         char imm4[6], funct3[4], rs1[6], rs2[6], imm11[8]; 
+        char imm12[13];
 
         strncpy(imm4, instruction + 20, 5);
         imm4[5] = '\0';
@@ -234,22 +235,39 @@ int main() {
         strncpy(imm11, instruction, 7);
         imm11[7] = '\0';
 
-        printf("s-type fields:\n");
-        printf("imm[4:0]: %s\n", imm4);
-        printf("funct3: %s\n", funct3);
-        printf("rs1: %s\n", rs1);
-        printf("rs2: %s\n", rs2);
-        printf("imm[11:5] %s\n", imm11);
+        // combine into full 12-bit imm
+        strcpy(imm12, imm11);
+        strcat(imm12, imm4);     // imm12->12 chars
+        imm12[12] = '\0';
+
+        int rs1Num = binaryToDecimal(rs1);
+        int rs2Num = binaryToDecimal(rs2);
+        int immVal = binaryToDecimal(imm12);
+
+        //sign extend
+        if (imm12[0] == '1') {
+            immVal -= (1 << 12);
+        }
+        // debugging statements->
+        // printf("Instruction type: S\n");
+        // printf("imm[4:0]: %s\n", imm4);
+        // printf("funct3: %s\n", funct3);
+        // printf("rs1: %s\n", rs1);
+        // printf("rs2: %s\n", rs2);
+        // printf("imm[11:5] %s\n", imm11);
 
         if(strcmp(funct3,"000")==0){
-            printf("This is a sb instruction");
+            printf("Operation: sb\n");
         }
         else if (strcmp(funct3,"001")==0){
-            printf("This is a sh instruction");
+            printf("Operation: sh\n");
         }
         else if(strcmp(funct3,"010")==0){
-            printf("This is a sw instruction");
+            printf("Operation: sw\n");
         }
+        printf("Rs1: x%d\n",rs1Num);
+        printf("Rs2: x%d\n",rs2Num);
+        printf("Immediate: %d (or 0x%X)\n",immVal,immVal & 0xFFF);
     }
 
     //SB-Type: beq, blt, bge, bne
