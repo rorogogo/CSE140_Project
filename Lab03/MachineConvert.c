@@ -15,19 +15,19 @@ int binaryToDecimal(char *binary) {
 // Determine format type based on opcode
 char* getFormatType(int opcode) {
     switch (opcode) {
-        case 51:   // 0110011
+        case 51://0110011
             return "R";
-        case 19:   // 0010011
+        case 19://0010011
             return "I";
-        case 3:    //0000011
+        case 3://0000011
             return "I";
-        case 35:   // 0100011
+        case 35://0100011
             return "S";
-        case 99:   // 1100011
+        case 99://1100011
             return "SB";
-        case 55:   // 0110111
+        case 55://0110111
             return "U";
-        case 111:  // 1101111
+        case 111://1101111
             return "UJ";
         default:
             return "Unknown";
@@ -55,12 +55,12 @@ int main() {
     for (int i = len - 7; i < len; i++) {
         opcode[i - (len - 7)] = instruction[i];
     }
-    opcode[7] = '\0';  // Null terminate the string
+    opcode[7] = '\0';
     
     int opcodeDecimal = binaryToDecimal(opcode);
     char *formatType = getFormatType(opcodeDecimal);
     
-    printf("The opcode is: %s (decimal: %d)\n", opcode, opcodeDecimal);
+    //printf("The opcode is: %s (decimal: %d)\n", opcode, opcodeDecimal);
     printf("Instruction type: %s\n", formatType);
 
     //Now that we know the format, we can make cases for each format to determine the fields + their values. I will delete the ones that I've done so we don't double up and it's easier to read.
@@ -120,8 +120,8 @@ int main() {
         printf("Rs1: x%d\n", rs1_num);
         printf("Rs2: x%d\n", rs2_num);
         printf("Rd: x%d\n", rd_num);
-        printf("Funct3: %s (%d)\n", funct3, f3_num);
-        printf("Funct7: %s (%d)", funct7, f7_num);
+        printf("Funct3: %d\n", f3_num);
+        printf("Funct7: %d\n", f7_num);
     }
 
     if(formatType[0]=='I'&& formatType[1]=='\0'){
@@ -300,14 +300,17 @@ int main() {
         }
         char imm[13];  //12 bit imm
         imm[0] = imm12[0];
-        strncpy(imm + 1, imm12 + 1, 6);    //10:5
-        strncpy(imm + 7, imm41, 4);        //4:1
+        strncpy(imm + 1, imm12 + 1, 6); //10:5
+        strncpy(imm + 7, imm41, 4); //4:1
         imm[11] = imm41[4];
         imm[12] = '\0';
+        int immVal = binaryToDecimal(imm);
+        if(imm[0] == '1') {
+            immVal -= (1 << 12);
+        }
         printf("rs1: x%d\n", binaryToDecimal(rs1));
         printf("rs2: x%d\n", binaryToDecimal(rs2));
-        printf("Immediate: %d\n", binaryToDecimal(imm));
-
+        printf("Immediate: %d\n", immVal);
     }
 
     // U-Type
@@ -355,6 +358,9 @@ int main() {
         fullImm[20] = '\0';
         int rd_num = binaryToDecimal(rd);
         int imm_val = binaryToDecimal(fullImm);
+        if (imm20[0] == '1') {
+            imm_val -= (1 << 20);
+        }
         imm_val = imm_val << 1; // Shift left by 1 to get byte offset
         printf("Operation: jal\n");
         printf("Rd: x%d\n", rd_num);
