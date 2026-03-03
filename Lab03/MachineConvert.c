@@ -136,69 +136,87 @@ int main() {
         strncpy(imm11, instruction, 12);
         imm11[12]='\0';
 
-        printf("I-Type fields:\n");
-        printf("rd: %s\n", rd);
-        printf("funct3: %s\n", funct3);
-        printf("rs1: %s\n", rs1);
-        printf("imm11: %s\n", imm11);
+        
+
+        int rdNum = binaryToDecimal(rd);
+        int rs1Num = binaryToDecimal(rs1);
+        int immVal= binaryToDecimal(imm11);
+
+        char imm115[8];
+        strncpy(imm115,imm11,7);
+        imm115[7]='\0';
+
+        // Sign extend 12-bit immediate
+        if (imm11[0] =='1'){
+            immVal-= (1<< 12);
+        }
+
+        // printf("I-Type fields:\n");
+        // printf("rd: %s\n", rd);
+        // printf("funct3: %s\n", funct3);
+        // printf("rs1: %s\n", rs1);
+        // printf("imm11: %s\n", imm11);
 
         // too many if else; alternative? or
         //funct 3 has couple identicals. need to finish rest of cases and polish
         if(strcmp(funct3,"000")==0){
 
             if(strcmp(opcode,"0000011")==0){
-            printf("This is an lb instruction");
+            printf("Operation: lb\n");
             // FIX THIS WARNING BECAUSE YOU FORGOT HOW TO WRITE IN C
-            return 0;
+            // return 0
             }
             else if(strcmp(opcode,"0010011")==0){
-                printf("This is an addi instruction");
+                printf("Operation: addi\n");
             }
             else if (strcmp(opcode,"1100111")==0){
-                printf("This is a jalr instruction");
+                printf("Operation: jalr\n");
             }
         }
 
-        else if(strcmp(funct3, "010")){
+        else if(strcmp(funct3, "010")==0){
 
             if (strcmp(opcode,"0000011")==0){
-                printf("This is a lw instruction!");
+                printf("Operation: lw\n");
             }
             else if (strcmp(opcode,"0010011")==0){
-                printf("This is an slti instruction");
+                printf("Operati0n: slti\n");
             }
         }
 
         else if (strcmp(funct3,"011")==0){
-            printf("This is a sltiu instruction");
+            printf("Operation: sltiu\n");
         }
         
         else if (strcmp(funct3,"111")==0){
-            printf("This is a andi instruction");
+            printf("Operation: andi\n");
         }
         
         
         else if (strcmp(funct3,"001")==0){
             if (strcmp(opcode,"0000011")==0){
-            printf("This is a lh instruction");
+                printf("operation: lh\n");
             }
             else if(strcmp(opcode,"0010011")==0){
-                printf("This is a slli instruction");
+                printf("Operation: slli\n");
             }
         }
         else if (strcmp(funct3,"110")==0){
-            printf("This is a ori instruction");
+            printf("Operation: ori");
         }
         
         // NEED THE FULL IMM11 OR ELSE WILL NOT WORK
         else if (strcmp(funct3,"101")==0){
-            if (strcmp(imm11,"0100000")==0){
-                printf("This is a srai instruction");
+
+            if (strcmp(imm115,"0100000")==0){
+                printf("Operation: srai");
             }
-            else if (strcmp(imm11,"0000000")==0){
-                printf("This is a srli instruction");
+            else if (strcmp(imm115,"0000000")==0){
+                printf("Operation: srli");
         }}
-        
+            printf("Rs1: x%d\n",rs1Num);
+            printf("Rd: x%d\n",rdNum);
+            printf("Immediate: %d (or 0x%X)\n", immVal, immVal & 0xFFF);
     }
 
     //S-Type: sb, sh, sw
