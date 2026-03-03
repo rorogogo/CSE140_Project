@@ -124,7 +124,7 @@ int main() {
         printf("Funct7: %s (%d)", funct7, f7_num);
     }
 
-    if(formatType[0]=='I'){
+    if(formatType[0]=='I'&& formatType[1]=='\0'){
         // I-type: opcode (7 bits), rd (5 bits), funct3 (3 bits), rs1 (5 bits), imm[11:0] (12 bits)
         char rd[6], funct3[4], rs1[6], imm11[13];
         strncpy(rd, instruction + 20, 5);
@@ -202,7 +202,7 @@ int main() {
     }
 
     //S-Type: sb, sh, sw
-    if(formatType[0]=='S'){
+    if(formatType[0]=='S'&& formatType[1]=='\0'){
         char imm4[6], funct3[3], rs1[6], rs2[6], imm11[8]; 
 
         strncpy(imm4, instruction + 20, 5);
@@ -216,7 +216,7 @@ int main() {
         strncpy(imm11, instruction, 7);
         imm11[7] = '\0';
 
-        printf("R-type fields:\n");
+        printf("s-type fields:\n");
         printf("imm[4:0]: %s\n", imm4);
         printf("funct3: %s\n", funct3);
         printf("rs1: %s\n", rs1);
@@ -237,7 +237,40 @@ int main() {
     //SB-Type: beq, blt, bge, bne
     if(formatType[0]=='S' && formatType[1]=='B'){
         // SB-type fields to extract
-        
+        char imm41[6], funct3[3], rs1[6], rs2[6], imm12[8]; 
+
+        strncpy(imm41, instruction + 20, 5);
+        imm41[5] = '\0';
+        strncpy(funct3, instruction + 17, 3);
+        funct3[3] = '\0';
+        strncpy(rs1, instruction + 12, 5);
+        rs1[5] = '\0';
+        strncpy(rs2, instruction + 7, 5);
+        rs2[5] = '\0';
+        strncpy(imm12, instruction, 7);
+        imm12[7] = '\0';
+
+        if(strcmp(funct3,"000")==0){
+            printf("Operation: beq\n");
+        }
+        else if(strcmp(funct3,"100")==0){
+            printf("Operation: blt\n");
+        }
+        else if (strcmp(funct3,"001")==0){
+            printf("Operation: bne\n");
+        }
+        else if(strcmp(funct3,"101")==0){
+            printf("Operation: bge\n");
+        }
+    
+
+        // printf("sb-type fields:\n");
+        printf("imm[4:1|11]: %s\n", imm41);
+        printf("funct3: %s\n", funct3);
+        printf("rs1: %s\n", rs1);
+        printf("rs2: %s\n", rs2);
+        printf("imm[12|10:5] %s\n", imm12);
+
     }
 
     // U-Type
