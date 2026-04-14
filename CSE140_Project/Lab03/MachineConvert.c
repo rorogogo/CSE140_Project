@@ -5,7 +5,7 @@
 int pc = 0;
 int next_pc = 0;
 int branch_target = 0;
-int rf[32] = {0};
+int rf[32] = {0}; //This is the register file
 
 int binaryToDecimal(char *binary) {
     int decimal = 0;
