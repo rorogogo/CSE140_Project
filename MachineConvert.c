@@ -31,7 +31,7 @@ int immediate = 0;
 int alu_ctrl = 0;
 int alu_result = 0;
 int mem_data = 0;
-//https://stackoverflow.com/questions/12338584/binary-to-decimal-in-c
+//https://stackoverflow.com/questions/12338584/binary-to-decimal-in-c (Formula of b->d decimal = decimal x 2 + current bit, and current bit is just the char value minus '0' to convert it to an int)
 int binaryToDecimal(char *binary) {
     int decimal = 0;
     for (int i = 0; binary[i] != '\0'; i++) {
@@ -42,14 +42,14 @@ int binaryToDecimal(char *binary) {
 int signExtend12bit(int value) {
     // Check if sign bit (bit 11) is 1
     if (value & 0x800) {
-        value |= 0xFFFFF000;  // Sign extend to 32 bits
+        value |= 0xFFFFF000;  // Sign extend to 32 bits, if you forget, this |= is just an "or" operation and just sets it to 1 if it isn't one already, and if it is already 1 it just stays 1, so it effectively extends the sign bit across the upper bits
     }
     return value;
 }
 int signExtend20bit(int value) {
     // Check if sign bit (bit 19) is 1
     if (value & 0x80000) {
-        value |= 0xFFF00000;  // Sign extend to 32 bits
+        value |= 0xFFF00000;  // Sign extend to 32 bits, if you forget, this |= is just an "or" operation and just sets it to 1 if it isn't one already, and if it is already 1 it just stays 1, so it effectively extends the sign bit across the upper bits
     }
     return value;
 }
