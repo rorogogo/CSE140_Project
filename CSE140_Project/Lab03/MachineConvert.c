@@ -28,6 +28,7 @@ int immediate = 0;
 int alu_ctrl = 0;
 int alu_result = 0;
 int mem_data = 0;
+//https://stackoverflow.com/questions/12338584/binary-to-decimal-in-c
 int binaryToDecimal(char *binary) {
     int decimal = 0;
     for (int i = 0; binary[i] != '\0'; i++) {
