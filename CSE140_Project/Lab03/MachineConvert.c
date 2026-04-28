@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+//Initialize all the variables section:
+
 int pc = 0;
 int next_pc = 0;
 int branch_target = 0;
@@ -19,7 +21,9 @@ int ALUOp1 = 0;
 int ALUOp0 = 0;
 int ALUSrc = 0;
 // Instruction fields (decoded in Decode())
-int rd = 0, rs1 = 0, rs2 = 0;
+int rd = 0;
+int rs1 = 0;
+int rs2 = 0;
 int immediate = 0;
 int alu_ctrl = 0;
 int alu_result = 0;
