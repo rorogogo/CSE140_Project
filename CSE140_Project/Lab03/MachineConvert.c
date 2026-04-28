@@ -10,6 +10,9 @@ int rf[32] = {0};          // Register file
 int d_mem[32] = {0};       // Data memory (32 entries, each 4-byte)
 int total_clock_cycles = 0;
 
+int jumpTarget=0;
+
+
 // Initialize Control signals
 int RegWrite = 0;
 int MemRead = 0;
@@ -18,6 +21,11 @@ int Branch = 0;
 int ALUOp1 = 0;
 int ALUOp0 = 0;
 int ALUSrc = 0;
+
+int Jump=0;
+int JumpReg=0;
+int WritePCPlus4=0;
+
 // Instruction fields (decoded in Decode())
 int rd = 0, rs1 = 0, rs2 = 0;
 int immediate = 0;
@@ -61,6 +69,8 @@ char* getFormatType(int opcode) {
             return "U";
         case 111:   // 1101111
             return "UJ";
+        case 103:
+            return "I"; //1100111
         default:
             return "Unknown";
     }
@@ -73,6 +83,10 @@ void ControlUnit(int opcode) {
     ALUOp1 = 0;
     ALUOp0 = 0;
     ALUSrc = 0;
+
+    Jump=0;
+    JumpReg=0;
+    WritePCPlus4=0;
     switch (opcode) {
         case 51:    // R-type (add, sub, and, or)
             RegWrite = 1;
@@ -100,6 +114,17 @@ void ControlUnit(int opcode) {
             ALUOp1 = 0;
             ALUOp0 = 1;
             ALUSrc = 0;
+            break;
+        case 111:
+            RegWrite=1;
+            Jump=1;
+            WritePCPlus4=1;
+            break;
+        case 103:
+            RegWrite=1;
+            JumpReg=1;
+            ALUSrc=1;
+            WritePCPlus4=1;
             break;
         default:
             break;
@@ -133,6 +158,8 @@ void ALUControl(int opcode, int funct3, int funct7) {
         alu_ctrl = 0010;  // add (for address calculation)
     } else if (opcode == 99) {  // beq
         alu_ctrl = 0110;  // sub (for comparison)
+    } else if (opcode==103){ //jalr
+        alu_ctrl=0010; //add rs1+imm
     }
 }
 int Execute(int operand1, int operand2, int alu_ctrl_val) {
@@ -243,6 +270,32 @@ void Decode(char *instruction, int opcode, int *funct3, int *funct7) {
         immediate = binaryToDecimal(imm_full);
         immediate = signExtend12bit(immediate);
     }
+        else if (strcmp(format,"UJ")==0){
+            char imm20_bit[2], imm10_1_bits[11], imm11_bit[2], imm19_12_bits[9];
+
+            strncpy(imm20_bit, instruction, 1);
+            imm20_bit[1]='\0';
+
+            strncpy(imm10_1_bits,instruction+1,10);
+            imm10_1_bits[10]='\0';
+
+            strncpy(imm11_bit, instruction+11,1);
+            imm11_bit[1]='\0';
+
+            strncpy(imm19_12_bits, instruction+12,8);
+            imm19_12_bits[8]='\0';
+            
+            char imm_full[21];
+            strcpy(imm_full, imm20_bit);
+            strcat(imm_full, imm19_12_bits);
+            strcat(imm_full, imm11_bit);
+            strcat(imm_full, imm10_1_bits);
+            imm_full[20] = '\0';
+
+            immediate = binaryToDecimal(imm_full);
+            immediate = signExtend20bit(immediate);
+
+        }
 }
 void Mem(int addr, int write_data, int is_write) {
     if (addr < 0 || addr >= 32) {
@@ -269,7 +322,12 @@ void Writeback(int write_value, int is_load, int dest_reg) {
         printf("x%d is modified to 0x%x\n", dest_reg, rf[dest_reg]);
     }
 }
-int main() {
+
+void initializePart1(){
+    for (int i=0; i<32; i++){
+        rf[i]=0;
+        d_mem[i]=0;
+    }
     // Initialize registers as specified
     rf[1] = 0x20;
     rf[2] = 0x5;
@@ -278,12 +336,34 @@ int main() {
     // Initialize data memory as specified
     d_mem[0x70 / 4] = 0x5;    // 0x70 = d_mem[28]
     d_mem[0x74 / 4] = 0x10;   // 0x74 = d_mem[29]
+}
+
+void initializePart2(){
+    for (int i=0; i<32; i++){
+        rf[i]=0;
+        d_mem[i]=0;
+    }
+    rf[8]=0x20; // s0
+    rf[10]=0x5; // a0
+    rf[11]=0x2;  // a1
+    rf[12]=0xa;  // a2
+    rf[13]=0xf;  // a3
+}
+int main() {
+
     FILE *fp;
     char filename[256];
     char instruction[33];
     printf("Enter the program file name to run:\n");
     fgets(filename, sizeof(filename), stdin);
     filename[strcspn(filename, "\n")] = 0;  // Remove newline
+
+    if(strstr(filename, "part2")!= NULL || strstr(filename,"Part2")!=NULL){
+        initializePart2();
+    }
+    else{
+        initializePart1();
+    }
     fp = fopen(filename, "r");
     if (fp == NULL) {
         printf("Error opening file: %s\n", filename);
@@ -313,6 +393,14 @@ int main() {
         if (Branch) {
             branch_target = (immediate << 1) + next_pc;
         }
+
+        if(Jump){
+            jumpTarget=pc+(immediate<<1);
+        }
+        if(JumpReg){
+            jumpTarget=rf[rs1]+immediate;
+        }
+
         // Memory access
         if (MemRead) {
             int mem_addr = alu_result / 4;  // Convert address to array index
@@ -328,13 +416,21 @@ int main() {
         }
         // Writeback
         if (RegWrite) {
-            Writeback(alu_result, MemRead, rd);
+            if(WritePCPlus4){
+                Writeback(next_pc,0,rd);
+            }
+            else{
+                Writeback(alu_result, MemRead, rd);
+            }
         }
-        // Update PC for next cycle
-        if (Branch && alu_zero) {
+        if(Jump||JumpReg){
+            pc=jumpTarget;
+        }
+        else if (Branch && alu_zero){
             pc = branch_target;
-        } else {
-            pc = next_pc;
+        }
+        else{
+            pc=next_pc;
         }
         printf("pc is modified to 0x%x\n", pc);
         // Increment clock cycles
