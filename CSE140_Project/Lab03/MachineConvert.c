@@ -308,18 +308,92 @@ void Mem(int addr, int write_data, int is_write) {
         mem_data = d_mem[addr];
     }
 }
+char* getRegisterName(int reg_num) {
+    switch (reg_num) {
+        case 0:
+            return "zero";
+        case 1:
+            return "ra";
+        case 2:
+            return "sp";
+        case 3:
+            return "gp";
+        case 4:
+            return "tp";
+        case 5:
+            return "t0";
+        case 6:
+            return "t1";
+        case 7:
+            return "t2";
+        case 8:
+            return "s0";
+        case 9:
+            return "s1";
+        case 10:
+            return "a0";
+        case 11:
+            return "a1";
+        case 12:
+            return "a2";
+        case 13:
+            return "a3";
+        case 14:
+            return "a4";
+        case 15:
+            return "a5";
+        case 16:
+            return "a6";
+        case 17:
+            return "a7";
+        case 18:
+            return "s2";
+        case 19:
+            return "s3";
+        case 20:
+            return "s4";
+        case 21:
+            return "s5";
+        case 22:
+            return "s6";
+        case 23:
+            return "s7";
+        case 24:
+            return "s8";
+        case 25:
+            return "s9";
+        case 26:
+            return "s10";
+        case 27:
+            return "s11";
+        case 28:
+            return "t3";
+        case 29:
+            return "t4";
+        case 30:
+            return "t5";
+        case 31:
+            return "t6";
+        default:
+            return "unknown";
+    }
+}
+
 void Writeback(int write_value, int is_load, int dest_reg) {
     if (dest_reg == 0) {
         return;  // Cannot write to x0
     }
+
     int old_value = rf[dest_reg];
+
     if (is_load) {
         rf[dest_reg] = mem_data;
     } else {
         rf[dest_reg] = write_value;
     }
+
     if (rf[dest_reg] != old_value) {
-        printf("x%d is modified to 0x%x\n", dest_reg, rf[dest_reg]);
+        printf("%s is modified to 0x%x\n", getRegisterName(dest_reg), rf[dest_reg]);
     }
 }
 
