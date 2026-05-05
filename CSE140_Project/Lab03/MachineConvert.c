@@ -239,7 +239,8 @@ void Decode(char *instruction, int opcode, int *funct3, int *funct7) {
         imm_bits[12] = '\0';
         immediate = binaryToDecimal(imm_bits);
         immediate = signExtend12bit(immediate);
-    } else if (strcmp(format, "S") == 0) {  // S-type (sw)
+    } 
+    else if (strcmp(format, "S") == 0) {  // S-type (sw)
         char imm_high[8], imm_low[6];
         strncpy(imm_high, instruction, 7);
         imm_high[7] = '\0';
@@ -251,26 +252,22 @@ void Decode(char *instruction, int opcode, int *funct3, int *funct7) {
         imm_full[12] = '\0';
         immediate = binaryToDecimal(imm_full);
         immediate = signExtend12bit(immediate);
-    } else if (strcmp(format, "SB") == 0) {  // SB-type (beq)
-        char imm12_bit[2], imm10_1_bits[11], imm11_bit[2], imm19_12_bits[9];
-        strncpy(imm12_bit, instruction, 1);
-        imm12_bit[1] = '\0';
-        strncpy(imm10_1_bits, instruction + 1, 10);
-        imm10_1_bits[10] = '\0';
-        strncpy(imm11_bit, instruction + 11, 1);
-        imm11_bit[1] = '\0';
-        strncpy(imm19_12_bits, instruction + 12, 8);
-        imm19_12_bits[8] = '\0';
+    } 
+    else if (strcmp(format, "SB") == 0) {  // SB-type (beq)
         char imm_full[13];
-        strcpy(imm_full, imm12_bit);
-        strcat(imm_full, imm19_12_bits);
-        strcat(imm_full, imm11_bit);
-        strcat(imm_full, imm10_1_bits);
+
+        imm_full[0] = instruction[0];      // imm[12]
+        imm_full[1] = instruction[24];     // imm[11]
+
+        strncpy(imm_full + 2, instruction + 1, 6);    // imm[10:5]
+        strncpy(imm_full + 8, instruction + 20, 4);   // imm[4:1]
+
         imm_full[12] = '\0';
+
         immediate = binaryToDecimal(imm_full);
         immediate = signExtend12bit(immediate);
     }
-        else if (strcmp(format,"UJ")==0){
+    else if (strcmp(format,"UJ")==0){
             char imm20_bit[2], imm10_1_bits[11], imm11_bit[2], imm19_12_bits[9];
 
             strncpy(imm20_bit, instruction, 1);
@@ -472,7 +469,7 @@ int main() {
             jumpTarget=pc+(immediate<<1);
         }
         if(JumpReg){
-            jumpTarget=rf[rs1]+immediate;
+            jumpTarget = (rf[rs1] + immediate) & ~1;
         }
 
         // Memory access
